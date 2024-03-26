@@ -1,19 +1,9 @@
-.App {
+.App{
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-
-.cat-img {
-  max-width: 60%;
-  height: auto;
-  resize: both;
-}
-
-.generate-btn {
-  padding: 2%;
-  margin: 2%;
-  border-radius: 15px;
-  border: 2px solid black;
+.add-song-container {
+  display: flex;
 }
