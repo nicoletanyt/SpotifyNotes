@@ -1,9 +1,74 @@
+html {
+  font-family: "Wix Madefor Text", sans-serif;
+}
+
 .App{
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-.add-song-container {
+.main-wrapper {
+  width: 70%;
+}
+.header {
   display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 4%;
+}
+.log-btn, .home-btn {
+  height: 100%;
+  padding: 1%;
+}
+.icon {
+  font-size: 2em;
+  padding: 1%;
+}
+
+.searchbar {
+  display: flex;
+  justify-content: space-between;
+}
+.searchbar input {
+  width: 70%;
+  padding: 1%;
+}
+.search-btn {
+  width: 20%;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+}
+.search-btn:hover, .add-btn:hover {
+  cursor: pointer;
+}
+
+.track-display {
+  display: flex;
+  align-items: center;
+}
+.track-display img {
+  margin-right: 3%;
+}
+.song-name {
+  font-weight: bold;
+}
+.add-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 10%;
+  background-color:darkseagreen;
+  border: 1px solid black;
+}
+
+.chart-wrapper {
+  display: flex;
+  justify-content: center;
+}
+.chart {
+  width: 50% !important;
+  height: auto !important;
 }

@@ -3,6 +3,9 @@ import "./index.css";
 import axios from "axios";
 import { ref, set, child, get } from "firebase/database";
 import database from "./firebase";
+import { CiSearch } from "react-icons/ci";
+import PieChart from "./components/PieChart.js";
+import DisplayTracks from "./components/displayTrack.js";
 
 function App() {
   const CLIENT_ID = "d8509cca5e7b40948a5beef95753fdca";
@@ -53,7 +56,6 @@ function App() {
         });
     } else {
       set(ref(database, "users/" + userID), songs);
-      console.log(songs);
     }
   }, [songs]);
 
@@ -78,28 +80,11 @@ function App() {
   };
 
   const addSongs = (song) => {
-    setSongs([...songs, song]);
-    console.log(songs);
+    setSongs([...songs, song])
+    alert("Song added")
+    setTracks([])
   };
 
-  const renderTracks = (playlist, isAdd) => {
-    if (playlist.length > 0) {
-      return playlist.map((song) => (
-        <div key={song.id}>
-          <br></br>
-          <p>{song.name}</p>
-          <p>{song.artists[0].name}</p>
-          <p>{song.external_urls.spotify}</p>
-          {isAdd ? (
-            <button onClick={() => addSongs(song)}>Add Song</button>
-          ) : (
-            <></>
-          )}
-          <hr />
-        </div>
-      ));
-    }
-  };
 
   const generateLink = async () => {
     const { data } = await axios.get("https://api.spotify.com/v1/me", {
@@ -108,7 +93,7 @@ function App() {
       },
     });
 
-    setLink("http://localhost:3000/?" + "user=" + data.id);
+    setLink("http://localhost:3000/?" + "user=" + data.id + "&add=true");
   };
 
   const copyToClipboard = async (link) => {
@@ -119,8 +104,23 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Spotify Notes</h1>
-      {isAdding == "false" ? (
+      <div className="header">
+        <button className="home-btn">Home</button>
+        <h1>Spotify Notes</h1>
+        {!token ? (
+          <a
+            href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
+            className="log-btn"
+          >
+            Login to Spotify
+          </a>
+        ) : (
+          <button className="log-btn" onClick={logout}>
+            Logout
+          </button>
+        )}
+      </div>
+      {isAdding != "true" ? (
         <div>
           <button onClick={generateLink}>Generate Link</button>
           <button
@@ -131,36 +131,31 @@ function App() {
             Copy
           </button>
           <p>{link}</p>
-          {!token ? (
-            <a
-              href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
-            >
-              Login to Spotify
-            </a>
-          ) : (
-            <button onClick={logout}>Logout</button>
-          )}
+
           <hr></hr>
-          <h2>Your Stats</h2>
-          {
-            renderTracks(songs, false)
-          }
+          <h2>Who you are to your friends</h2>
+          {DisplayTracks(songs, false, (song) => {addSongs(song)})}
         </div>
       ) : (
-        <div className="add-song-container">
+        <div className="main-wrapper">
           <div>
-            <form onSubmit={searchSongs}>
+            <form onSubmit={searchSongs} className="searchbar">
               <input
                 type="text"
                 onChange={(e) => setSearchKey(e.target.value)}
+                placeholder="Search Song..."
               />
-              <button type={"submit"}>Search</button>
+              <button type={"submit"} className="search-btn">
+                <CiSearch className="icon"/>
+                <p>Search</p>
+              </button>
             </form>
-            {renderTracks(tracks, true)}
+            {DisplayTracks(tracks, true, (song) => {addSongs(song)})}
           </div>
+          <br></br>
           <div>
-            <h3>Current Tracks</h3>
-            {renderTracks(songs, false)}
+            <h2>Current Tracks Added</h2>
+            {PieChart(songs)}
           </div>
         </div>
       )}
