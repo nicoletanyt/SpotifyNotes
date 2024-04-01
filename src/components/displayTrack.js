@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaPlus } from "react-icons/fa";
 
-const DisplayTracks = (playlist, isAdd, addSongs) => {
+const DisplayTracks = ({playlist, isAdd, addSongs}) => {
     if (playlist.length > 0) {
       return playlist.map((song) => (
         <div key={song.id} className="track-display">

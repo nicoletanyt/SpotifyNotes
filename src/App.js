@@ -66,7 +66,8 @@ function App() {
 
   const searchSongs = async (e) => {
     e.preventDefault();
-    const { data } = await axios.get("https://api.spotify.com/v1/search", {
+    try {
+      const { data } = await axios.get("https://api.spotify.com/v1/search", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -74,17 +75,24 @@ function App() {
         q: searchKey,
         type: "track",
       },
-    });
-
+    })
     setTracks(data.tracks.items);
+    }
+    
+    catch(err) {
+      console.log(err)
+      if (err.response.data.error.status == 401) {
+        alert("Please login to Spotify again.")
+      }
+    }
+
   };
 
   const addSongs = (song) => {
-    setSongs([...songs, song])
-    alert("Song added")
-    setTracks([])
+    setSongs([...songs, song]);
+    alert("Song added");
+    setTracks([]);
   };
-
 
   const generateLink = async () => {
     const { data } = await axios.get("https://api.spotify.com/v1/me", {
@@ -134,7 +142,10 @@ function App() {
 
           <hr></hr>
           <h2>Who you are to your friends</h2>
-          {DisplayTracks(songs, false, (song) => {addSongs(song)})}
+          {/* {DisplayTracks(songs, false, (song) => {
+            addSongs(song);
+          })} */}
+          {/* <PieChart userID={userID} database={database}/> */}
         </div>
       ) : (
         <div className="main-wrapper">
@@ -146,16 +157,16 @@ function App() {
                 placeholder="Search Song..."
               />
               <button type={"submit"} className="search-btn">
-                <CiSearch className="icon"/>
+                <CiSearch className="icon" />
                 <p>Search</p>
               </button>
             </form>
-            {DisplayTracks(tracks, true, (song) => {addSongs(song)})}
+            <DisplayTracks playlist={tracks} isAdd={true} addSongs={(song) => {addSongs(song)}}/>
           </div>
           <br></br>
           <div>
             <h2>Current Tracks Added</h2>
-            {PieChart(songs)}
+            <PieChart userID={userID} database={database}/>
           </div>
         </div>
       )}

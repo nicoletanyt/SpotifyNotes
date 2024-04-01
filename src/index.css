@@ -68,7 +68,7 @@ html {
   display: flex;
   justify-content: center;
 }
-.chart {
+#chart-0 {
   width: 50% !important;
   height: auto !important;
 }
