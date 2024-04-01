@@ -17,7 +17,9 @@ function App() {
   const [searchKey, setSearchKey] = useState("");
   const [tracks, setTracks] = useState([]);
   const [songs, setSongs] = useState([]);
-  const [link, setLink] = useState([]);
+  const [link, setLink] = useState("");
+  const [perLink, setPerLink] = useState("");
+  const [playlist, setPlaylist] = useState(null)
 
   const urlParams = new URLSearchParams(window.location.search);
   const userID = urlParams.get("user");
@@ -56,6 +58,7 @@ function App() {
         });
     } else {
       set(ref(database, "users/" + userID), songs);
+      getFirebase()
     }
   }, [songs]);
 
@@ -68,24 +71,21 @@ function App() {
     e.preventDefault();
     try {
       const { data } = await axios.get("https://api.spotify.com/v1/search", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        q: searchKey,
-        type: "track",
-      },
-    })
-    setTracks(data.tracks.items);
-    }
-    
-    catch(err) {
-      console.log(err)
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          q: searchKey,
+          type: "track",
+        },
+      });
+      setTracks(data.tracks.items);
+    } catch (err) {
+      console.log(err);
       if (err.response.data.error.status == 401) {
-        alert("Please login to Spotify again.")
+        alert("Please login to Spotify again.");
       }
     }
-
   };
 
   const addSongs = (song) => {
@@ -102,19 +102,42 @@ function App() {
     });
 
     setLink("http://localhost:3000/?" + "user=" + data.id + "&add=true");
+    setPerLink("http://localhost:3000/?" + "user=" + data.id + "&add=false");
   };
 
-  const copyToClipboard = async (link) => {
-    setTimeout(() => {
-      navigator.clipboard.writeText(link);
-    }, 0);
-  };
+  const getFirebase = () => {
+    get(child(ref(database), `users/${userID}`))
+      .then((snapshot) => {
+        console.log("Got data");
+        if (snapshot.exists()) {
+            setPlaylist(snapshot.val())
+            console.log(playlist)
+            console.log("Confirmed")
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+ 
+  // check for new songs 
+  useEffect(() => {
+    getFirebase()
+  }, []);
+
+  // const copyToClipboard = async (link) => {
+  //   setTimeout(() => {
+  //     navigator.clipboard.writeText(link);
+  //   }, 0);
+  // };
 
   return (
     <div className="App">
       <div className="header">
         <button className="home-btn">Home</button>
-        <h1>Spotify Notes</h1>
+        <h1 className="title">Spotify Votes</h1>
         {!token ? (
           <a
             href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
@@ -128,47 +151,64 @@ function App() {
           </button>
         )}
       </div>
-      {isAdding != "true" ? (
-        <div>
-          <button onClick={generateLink}>Generate Link</button>
-          <button
-            onClick={() => {
-              copyToClipboard(link);
-            }}
-          >
-            Copy
-          </button>
-          <p>{link}</p>
+      {token ? (
+        isAdding != "true" ? (
+          <div className="main-wrapper">
+            <button onClick={generateLink} className="btn">
+              Generate Links
+            </button>
+            {link && perLink ? (
+              <div>
+                <br></br>
+                <h3>Link to send to your friends: </h3>
+                <a href={link}>{link}</a>
+                <h3>Link for you to view your results: </h3>
+                <a href={perLink}>{perLink}</a>
+              </div>
+            ) : (
+              <></>
+            )}
+            {userID && (
+              <div>
+                <br></br>
+                <hr></hr>
+                <h2>Your Stats</h2>
 
-          <hr></hr>
-          <h2>Who you are to your friends</h2>
-          {/* {DisplayTracks(songs, false, (song) => {
-            addSongs(song);
-          })} */}
-          {/* <PieChart userID={userID} database={database}/> */}
-        </div>
-      ) : (
-        <div className="main-wrapper">
-          <div>
-            <form onSubmit={searchSongs} className="searchbar">
-              <input
-                type="text"
-                onChange={(e) => setSearchKey(e.target.value)}
-                placeholder="Search Song..."
+                <PieChart playlist={playlist} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="main-wrapper">
+            <div>
+              <form onSubmit={searchSongs} className="searchbar">
+                <input
+                  type="text"
+                  onChange={(e) => setSearchKey(e.target.value)}
+                  placeholder="Search Song..."
+                />
+                <button type={"submit"} className="search-btn">
+                  <CiSearch className="icon" />
+                  <p>Search</p>
+                </button>
+              </form>
+              <DisplayTracks
+                playlist={tracks}
+                isAdd={true}
+                addSongs={(song) => {
+                  addSongs(song);
+                }}
               />
-              <button type={"submit"} className="search-btn">
-                <CiSearch className="icon" />
-                <p>Search</p>
-              </button>
-            </form>
-            <DisplayTracks playlist={tracks} isAdd={true} addSongs={(song) => {addSongs(song)}}/>
+            </div>
+            <br></br>
+            <div>
+              <h2>Current Tracks Added</h2>
+              <PieChart playlist={playlist} />
+            </div>
           </div>
-          <br></br>
-          <div>
-            <h2>Current Tracks Added</h2>
-            <PieChart userID={userID} database={database}/>
-          </div>
-        </div>
+        )
+      ) : (
+        <p>Please log in.</p>
       )}
     </div>
   );
