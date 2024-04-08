@@ -1,6 +1,14 @@
 html {
   font-family: "Wix Madefor Text", sans-serif;
 }
+a {
+  color: black;
+  text-decoration: none;
+}
+button {
+  all: unset;
+  cursor: pointer;
+}
 
 .App{
   display: flex;
@@ -25,17 +33,11 @@ html {
 .log-btn{
   padding: 1%;
   background-color: #15ae61;
-  color: black;
-  text-decoration: none;
   border-radius: 6px;
   border: 1px solid gray;
   box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
   position: absolute;
   right: 2%;
-}
-button {
-  all: unset;
-  cursor: pointer;
 }
 .icon {
   font-size: 2em;
@@ -86,7 +88,7 @@ button {
   background-color:darkseagreen;
   border: 1px solid black;
 }
-.generate-btn {
+.generate-btn, .rec-btn, .play-btn {
   width: 20%;
   padding: 1.5%;
   border: 1px solid gray;
@@ -103,4 +105,16 @@ button {
 #chart-0 {
   width: 90% !important;
   height: auto !important;
+}
+
+.rec-btn {
+  margin: 2%;
+  margin-left: 0;
+}
+.play-btn {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 0;
 }

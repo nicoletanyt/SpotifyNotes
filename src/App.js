@@ -5,8 +5,8 @@ import { ref, set, child, get } from "firebase/database";
 import database from "./firebase";
 import { CiSearch } from "react-icons/ci";
 import { FaHome } from "react-icons/fa";
-import PieChart from "./components/PieChart.js";
-import DisplayTracks from "./components/displayTrack.js";
+import ChartDisplay from "./components/ChartDisplay.js";
+import DisplayTracks from "./components/DisplayTrack.js";
 
 function App() {
   const CLIENT_ID = "d8509cca5e7b40948a5beef95753fdca";
@@ -21,6 +21,7 @@ function App() {
   const [link, setLink] = useState("");
   const [perLink, setPerLink] = useState("");
   const [playlist, setPlaylist] = useState(null)
+  const [recommendation, setRecommendation] = useState(null)
 
   const urlParams = new URLSearchParams(window.location.search);
   const userID = urlParams.get("user");
@@ -134,6 +135,22 @@ function App() {
   //   }, 0);
   // };
 
+  const getRec = async() => {
+    let songIDs = ""
+    for (let i = 0; i < playlist.length; ++i) {
+      songIDs += playlist[i].id + ","
+    }
+
+    songIDs = songIDs.slice(0, -1);
+
+    const { data } = await axios.get("https://api.spotify.com/v1/recommendations?limit=1&seed_tracks=" + songIDs, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setRecommendation(data.tracks)
+  }
+
   return (
     <div className="App">
       <div className="header">
@@ -174,7 +191,7 @@ function App() {
                 <hr></hr>
                 <h2>Your Stats</h2>
 
-                <PieChart playlist={playlist} />
+                <ChartDisplay playlist={playlist} />
               </div>
             )}
           </div>
@@ -201,7 +218,11 @@ function App() {
             <br></br>
             <div>
               <h2>Current Tracks Added</h2>
-              <PieChart playlist={playlist} />
+              <ChartDisplay playlist={playlist} />
+              <br></br>
+              <button onClick={getRec} className="rec-btn">Get Recommendation</button>
+              <br></br>
+              <DisplayTracks playlist={recommendation} isAdd={false}/>
             </div>
           </div>
         )

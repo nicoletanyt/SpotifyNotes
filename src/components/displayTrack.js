@@ -1,8 +1,9 @@
 import React from 'react'
 import { FaPlus } from "react-icons/fa";
+import { FaSpotify } from "react-icons/fa";
 
 const DisplayTracks = ({playlist, isAdd, addSongs}) => {
-    if (playlist.length > 0) {
+    if (playlist != null && playlist.length > 0) {
       return playlist.map((song) => (
         <div key={song.id} className="track-display">
           <img src={song.album.images[2].url}/>
@@ -17,7 +18,10 @@ const DisplayTracks = ({playlist, isAdd, addSongs}) => {
                 <p>Add Song</p>
             </button>
           ) : (
-            <></>
+            <a href={song.external_urls.spotify} className='play-btn'>
+              <FaSpotify className='icon'/>
+              <p>Play on Spotify</p>
+            </a>
           )}
         </div>
       ));

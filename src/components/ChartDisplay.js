@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Chart, registerables, ArcElement, Tooltip, Legend } from "chart.js";
+import { Chart, registerables, ArcElement, Tooltip, Legend, BarElement, LinearScale } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { Pie } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
-const PieChart = ({ playlist }) => {
+const ChartDisplay = ({ playlist }) => {
   let diagram = {};
   let diagram_labels = [];
   const [data, setData] = useState(null);
   const [created, setCreated] = useState(false);
   const [options, setOptions] = useState(null);
 
-  Chart.register(ArcElement, Tooltip, Legend);
+  Chart.register(ArcElement, Tooltip, Legend, BarElement, LinearScale);
   Chart.register(ChartDataLabels);
   Chart.register(...registerables);
 
@@ -39,6 +39,9 @@ const PieChart = ({ playlist }) => {
           {
             label: "Number of Votes",
             data: Object.values(diagram),
+            backgroundColor: "lightgray",
+            borderColor: "black",
+            borderWidth: 1,
           },
         ],
       });
@@ -56,7 +59,7 @@ const PieChart = ({ playlist }) => {
             labels: {
               value: {
                 data: diagram_labels,
-                color: "#FFFF",
+                color: "#00000",
               },
             },
           },
@@ -75,7 +78,7 @@ const PieChart = ({ playlist }) => {
   return (
     <div className="chart-wrapper">
       {data != null && (
-        <Pie
+        <Bar
           id="chart-0"
           data={data}
           plugins={[ChartDataLabels]}
@@ -86,4 +89,4 @@ const PieChart = ({ playlist }) => {
   );
 };
 
-export default PieChart;
+export default ChartDisplay;
