@@ -72,6 +72,7 @@ button {
 .track-display {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 .track-display img {
   margin-right: 3%;
@@ -79,16 +80,7 @@ button {
 .song-name {
   font-weight: bold;
 }
-.add-btn {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 10%;
-  background-color:darkseagreen;
-  border: 1px solid black;
-}
-.generate-btn, .rec-btn, .play-btn {
+.generate-btn, .rec-btn, .play-btn, .add-btn {
   width: 20%;
   padding: 1.5%;
   border: 1px solid gray;
@@ -117,4 +109,12 @@ button {
   align-items: center;
   justify-content: space-evenly;
   padding: 0;
+}
+.add-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0;
+  width: 12%;
 }

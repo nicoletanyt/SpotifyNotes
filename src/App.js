@@ -178,6 +178,7 @@ function App() {
                   <p>Search</p>
                 </button>
               </form>
+              <br></br>
               <DisplayTracks
                 playlist={tracks}
                 isAdd={true}
