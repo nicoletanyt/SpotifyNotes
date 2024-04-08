@@ -18,7 +18,7 @@ const DisplayTracks = ({playlist, isAdd, addSongs}) => {
                 <p>Add Song</p>
             </button>
           ) : (
-            <a href={song.external_urls.spotify} className='play-btn'>
+            <a href={song.external_urls.spotify} className='play-btn' target="_blank">
               <FaSpotify className='icon'/>
               <p>Play on Spotify</p>
             </a>

@@ -128,17 +128,24 @@ function App() {
   const getRec = async() => {
     let songIDs = ""
     for (let i = 0; i < playlist.length; ++i) {
-      songIDs += playlist[i].id + ","
+      if (!songIDs.includes(playlist[i].id)) {
+        songIDs += playlist[i].id + ","
+      }
     }
 
     songIDs = songIDs.slice(0, -1);
-
-    const { data } = await axios.get("https://api.spotify.com/v1/recommendations?limit=1&seed_tracks=" + songIDs, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setRecommendation(data.tracks)
+    try {
+      const { data } = await axios.get("https://api.spotify.com/v1/recommendations?limit=1&seed_tracks=" + songIDs, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      setRecommendation(data.tracks)
+    } catch(err) {
+      console.log(err)
+      alert("Please login to Spotify again.");
+    }
   }
 
   return (

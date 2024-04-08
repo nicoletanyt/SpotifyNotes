@@ -6,6 +6,7 @@ import { Bar } from "react-chartjs-2";
 const ChartDisplay = ({ playlist }) => {
   let diagram = {};
   let diagram_labels = [];
+  let artist_labels = []
   const [data, setData] = useState(null);
   const [created, setCreated] = useState(false);
   const [options, setOptions] = useState(null);
@@ -29,6 +30,7 @@ const ChartDisplay = ({ playlist }) => {
 
       for (let i = 0; i < Object.keys(diagram).length; i++) {
         diagram_labels.push(JSON.parse(Object.keys(diagram)[i]).name);
+        artist_labels.push(JSON.parse(Object.keys(diagram)[i]).artists[0].name)
       }
 
       console.log(diagram_labels);
@@ -53,12 +55,11 @@ const ChartDisplay = ({ playlist }) => {
         plugins: {
           datalabels: {
             formatter: function (value, context) {
-              return context.chart.data.labels[context.dataIndex].split(" ");
+              return context.chart.data.labels[context.dataIndex] + "\n" + artist_labels[context.dataIndex];
             },
             padding: 10,
             labels: {
               value: {
-                data: diagram_labels,
                 color: "#00000",
               },
             },
