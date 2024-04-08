@@ -18,14 +18,10 @@ function App() {
   const [searchKey, setSearchKey] = useState("");
   const [tracks, setTracks] = useState([]);
   const [songs, setSongs] = useState([]);
-  const [link, setLink] = useState("");
-  const [perLink, setPerLink] = useState("");
   const [playlist, setPlaylist] = useState(null)
   const [recommendation, setRecommendation] = useState(null)
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const userID = urlParams.get("user");
-  const isAdding = urlParams.get("add");
+  const userID = localStorage.getItem("spotify-user-id")
 
   useEffect(() => {
     // Use current token if exists, else extract new one
@@ -42,8 +38,14 @@ function App() {
       window.location.hash = "";
       window.localStorage.setItem("token", token);
     }
-    setToken(token);
+    setToken(token);    
+    // Check for any new songs
+    getFirebase()
   }, []);
+
+  useEffect(() => {
+    if (token) generateLink()
+  }, [token])
 
   useEffect(() => {
     if (songs.length == 0) {
@@ -101,10 +103,9 @@ function App() {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    setLink("http://localhost:3000/?" + "user=" + data.id + "&add=true");
-    setPerLink("http://localhost:3000/?" + "user=" + data.id + "&add=false");
+    }); 
+    localStorage.setItem("spotify-user-id", data.id)
+    console.log(data.id)
   };
 
   const getFirebase = () => {
@@ -123,17 +124,6 @@ function App() {
         console.error(error);
       });
   }
- 
-  // check for new songs 
-  useEffect(() => {
-    getFirebase()
-  }, []);
-
-  // const copyToClipboard = async (link) => {
-  //   setTimeout(() => {
-  //     navigator.clipboard.writeText(link);
-  //   }, 0);
-  // };
 
   const getRec = async() => {
     let songIDs = ""
@@ -154,7 +144,7 @@ function App() {
   return (
     <div className="App">
       <div className="header">
-        <h1 className="title">Spotify Votes</h1>
+        <h1 className="title">What song are you?</h1>
         {!token ? (
           <a
             href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
@@ -169,33 +159,6 @@ function App() {
         )}
       </div>
       {token ? (
-        isAdding != "true" ? (
-          <div className="main-wrapper">
-            <button onClick={generateLink} className="generate-btn">
-              Generate Links
-            </button>
-            {link && perLink ? (
-              <div>
-                <br></br>
-                <h3>Link to send to your friends: </h3>
-                <a href={link}>{link}</a>
-                <h3>Link for you to view your results: </h3>
-                <a href={perLink}>{perLink}</a>
-              </div>
-            ) : (
-              <></>
-            )}
-            {userID && (
-              <div>
-                <br></br>
-                <hr></hr>
-                <h2>Your Stats</h2>
-
-                <ChartDisplay playlist={playlist} />
-              </div>
-            )}
-          </div>
-        ) : (
           <div className="main-wrapper">
               <form onSubmit={searchSongs} className="searchbar">
                 <input
@@ -226,7 +189,7 @@ function App() {
             </div>
           </div>
         )
-      ) : (
+      :(
         <p>Please log in.</p>
       )}
     </div>
