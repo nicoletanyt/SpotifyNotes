@@ -7,19 +7,35 @@ html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding: 2%;
 }
 .main-wrapper {
   width: 70%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 .header {
   display: flex;
   width: 100%;
-  justify-content: space-between;
   margin-bottom: 4%;
+  justify-content: center;
+  align-items: center;
 }
-.log-btn, .home-btn {
-  height: 100%;
+.log-btn{
   padding: 1%;
+  background-color: #15ae61;
+  color: black;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 1px solid gray;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  position: absolute;
+  right: 2%;
+}
+button {
+  all: unset;
+  cursor: pointer;
 }
 .icon {
   font-size: 2em;
@@ -29,16 +45,23 @@ html {
 .searchbar {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 .searchbar input {
-  width: 70%;
+  width: 80%;
   padding: 1%;
 }
 .search-btn {
-  width: 20%;
+  width: 15%;
+  margin-left: 2%;
   display: flex; 
   justify-content: center;
   align-items: center;
+  border: 1px solid gray;
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  text-align: center;
+  background-color: #15ae61;
 }
 .search-btn:hover, .add-btn:hover {
   cursor: pointer;
@@ -63,12 +86,14 @@ html {
   background-color:darkseagreen;
   border: 1px solid black;
 }
-.btn {
-  width: 30%;
-  padding: 1%;
+.generate-btn {
+  width: 20%;
+  padding: 1.5%;
   border: 1px solid gray;
   border-radius: 6px;
   box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  text-align: center;
+  background-color: #15ae61;
 }
 
 .chart-wrapper {

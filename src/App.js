@@ -4,6 +4,7 @@ import axios from "axios";
 import { ref, set, child, get } from "firebase/database";
 import database from "./firebase";
 import { CiSearch } from "react-icons/ci";
+import { FaHome } from "react-icons/fa";
 import PieChart from "./components/PieChart.js";
 import DisplayTracks from "./components/displayTrack.js";
 
@@ -136,7 +137,6 @@ function App() {
   return (
     <div className="App">
       <div className="header">
-        <button className="home-btn">Home</button>
         <h1 className="title">Spotify Votes</h1>
         {!token ? (
           <a
@@ -154,7 +154,7 @@ function App() {
       {token ? (
         isAdding != "true" ? (
           <div className="main-wrapper">
-            <button onClick={generateLink} className="btn">
+            <button onClick={generateLink} className="generate-btn">
               Generate Links
             </button>
             {link && perLink ? (
@@ -180,7 +180,6 @@ function App() {
           </div>
         ) : (
           <div className="main-wrapper">
-            <div>
               <form onSubmit={searchSongs} className="searchbar">
                 <input
                   type="text"
@@ -199,7 +198,6 @@ function App() {
                   addSongs(song);
                 }}
               />
-            </div>
             <br></br>
             <div>
               <h2>Current Tracks Added</h2>
