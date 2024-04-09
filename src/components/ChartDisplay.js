@@ -4,9 +4,6 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar } from "react-chartjs-2";
 
 const ChartDisplay = ({ playlist }) => {
-  let diagram = {};
-  let diagram_labels = [];
-  let artist_labels = []
   const [data, setData] = useState(null);
   const [created, setCreated] = useState(false);
   const [options, setOptions] = useState(null);
@@ -16,6 +13,9 @@ const ChartDisplay = ({ playlist }) => {
   Chart.register(...registerables);
 
   useEffect(() => {
+    let diagram = {};
+  let diagram_labels = [];
+  let artist_labels = []
     if (playlist != null) {
       for (let i = 0; i < playlist.length; i++) {
         let key = JSON.stringify(playlist[i]);
@@ -28,12 +28,15 @@ const ChartDisplay = ({ playlist }) => {
         diagram[key] = value;
       }
 
+      console.log(diagram)
       for (let i = 0; i < Object.keys(diagram).length; i++) {
-        diagram_labels.push(JSON.parse(Object.keys(diagram)[i]).name);
         artist_labels.push(JSON.parse(Object.keys(diagram)[i]).artists[0].name)
+        diagram_labels.push(JSON.parse(Object.keys(diagram)[i]).name);
       }
 
+      console.log(playlist)
       console.log(diagram_labels);
+      console.log(artist_labels);
 
       setData({
         labels: diagram_labels,
@@ -48,7 +51,7 @@ const ChartDisplay = ({ playlist }) => {
         ],
       });
     }
-    if (data != null && !created) {
+    if (data != null && !created && artist_labels.length == playlist.length) {
       console.log("Created");
       setCreated(true);
       setOptions({

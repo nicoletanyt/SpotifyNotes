@@ -80,7 +80,7 @@ button {
 .song-name {
   font-weight: bold;
 }
-.generate-btn, .rec-btn, .play-btn, .add-btn {
+.generate-btn, .rec-btn, .play-btn, .add-btn, .clear-btn {
   width: 20%;
   padding: 1.5%;
   border: 1px solid gray;
@@ -117,4 +117,7 @@ button {
   justify-content: space-around;
   padding: 0;
   width: 12%;
+}
+.clear-btn {
+  background-color: red;
 }

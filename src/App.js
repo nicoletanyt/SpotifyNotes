@@ -18,10 +18,10 @@ function App() {
   const [searchKey, setSearchKey] = useState("");
   const [tracks, setTracks] = useState([]);
   const [songs, setSongs] = useState([]);
-  const [playlist, setPlaylist] = useState(null)
-  const [recommendation, setRecommendation] = useState(null)
+  const [playlist, setPlaylist] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
 
-  const userID = localStorage.getItem("spotify-user-id")
+  const userID = localStorage.getItem("spotify-user-id");
 
   useEffect(() => {
     // Use current token if exists, else extract new one
@@ -38,14 +38,14 @@ function App() {
       window.location.hash = "";
       window.localStorage.setItem("token", token);
     }
-    setToken(token);    
+    setToken(token);
     // Check for any new songs
-    getFirebase()
+    getFirebase();
   }, []);
 
   useEffect(() => {
-    if (token) generateLink()
-  }, [token])
+    if (token) generateLink();
+  }, [token]);
 
   useEffect(() => {
     if (songs.length == 0) {
@@ -62,7 +62,7 @@ function App() {
         });
     } else {
       set(ref(database, "users/" + userID), songs);
-      getFirebase()
+      getFirebase();
     }
   }, [songs]);
 
@@ -93,6 +93,7 @@ function App() {
   };
 
   const addSongs = (song) => {
+    console.log(songs)
     setSongs([...songs, song]);
     alert("Song added");
     setTracks([]);
@@ -103,9 +104,9 @@ function App() {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }); 
-    localStorage.setItem("spotify-user-id", data.id)
-    console.log(data.id)
+    });
+    localStorage.setItem("spotify-user-id", data.id);
+    console.log(data.id);
   };
 
   const getFirebase = () => {
@@ -113,9 +114,9 @@ function App() {
       .then((snapshot) => {
         console.log("Got data");
         if (snapshot.exists()) {
-            setPlaylist(snapshot.val())
-            console.log(playlist)
-            console.log("Confirmed")
+          setPlaylist(snapshot.val());
+          console.log(playlist);
+          console.log("Confirmed");
         } else {
           console.log("No data available");
         }
@@ -123,30 +124,42 @@ function App() {
       .catch((error) => {
         console.error(error);
       });
-  }
+  };
 
-  const getRec = async() => {
-    let songIDs = ""
+  const getRec = async () => {
+    let songIDs = "";
     for (let i = 0; i < playlist.length; ++i) {
       if (!songIDs.includes(playlist[i].id)) {
-        songIDs += playlist[i].id + ","
+        songIDs += playlist[i].id + ",";
       }
     }
 
     songIDs = songIDs.slice(0, -1);
     try {
-      const { data } = await axios.get("https://api.spotify.com/v1/recommendations?limit=1&seed_tracks=" + songIDs, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      setRecommendation(data.tracks)
-    } catch(err) {
-      console.log(err)
+      const { data } = await axios.get(
+        "https://api.spotify.com/v1/recommendations?limit=1&seed_tracks=" +
+          songIDs,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setRecommendation(data.tracks);
+    } catch (err) {
+      console.log(err);
       alert("Please login to Spotify again.");
     }
-  }
+  };
+
+  const clearSongs = async () => {
+    set(ref(database, "users/" + userID), null);
+    setSongs([]);
+    setPlaylist(null);
+    console.log("Cleared");
+    getFirebase()
+  };
 
   return (
     <div className="App">
@@ -166,38 +179,48 @@ function App() {
         )}
       </div>
       {token ? (
-          <div className="main-wrapper">
-              <form onSubmit={searchSongs} className="searchbar">
-                <input
-                  type="text"
-                  onChange={(e) => setSearchKey(e.target.value)}
-                  placeholder="Search Song..."
-                />
-                <button type={"submit"} className="search-btn">
-                  <CiSearch className="icon" />
-                  <p>Search</p>
-                </button>
-              </form>
-              <br></br>
-              <DisplayTracks
-                playlist={tracks}
-                isAdd={true}
-                addSongs={(song) => {
-                  addSongs(song);
-                }}
-              />
-            <br></br>
+        <div className="main-wrapper">
+          <form onSubmit={searchSongs} className="searchbar">
+            <input
+              type="text"
+              onChange={(e) => setSearchKey(e.target.value)}
+              placeholder="Search Song..."
+            />
+            <button type={"submit"} className="search-btn">
+              <CiSearch className="icon" />
+              <p>Search</p>
+            </button>
+          </form>
+          <br></br>
+          <DisplayTracks
+            playlist={tracks}
+            isAdd={true}
+            addSongs={(song) => {
+              addSongs(song);
+            }}
+          />
+          <br></br>
+          {!playlist ? (
+            <h3>No Songs Available</h3>
+          ) : (
             <div>
               <h2>Current Tracks Added</h2>
               <ChartDisplay playlist={playlist} />
               <br></br>
-              <button onClick={getRec} className="rec-btn">Get Recommendation</button>
+              <div className="btn-wrapper">
+                <button onClick={getRec} className="rec-btn">
+                  Get Recommendation
+                </button>
+                <button onClick={clearSongs} className="clear-btn">
+                  Clear all songs
+                </button>
+              </div>
               <br></br>
-              <DisplayTracks playlist={recommendation} isAdd={false}/>
+              <DisplayTracks playlist={recommendation} isAdd={false} />
             </div>
-          </div>
-        )
-      :(
+          )}
+        </div>
+      ) : (
         <p>Please log in.</p>
       )}
     </div>
