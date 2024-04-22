@@ -181,15 +181,14 @@ function App() {
       {token ? (
         <div className="main-wrapper">
           <form onSubmit={searchSongs} className="searchbar">
+            <button type={"submit"} className="search-btn">
+              <CiSearch className="icon" />
+            </button>
             <input
               type="text"
               onChange={(e) => setSearchKey(e.target.value)}
               placeholder="Search Song..."
             />
-            <button type={"submit"} className="search-btn">
-              <CiSearch className="icon" />
-              <p>Search</p>
-            </button>
           </form>
           <br></br>
           <DisplayTracks
